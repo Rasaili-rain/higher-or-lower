@@ -4,6 +4,13 @@
 #include <string.h>
 #include <stdbool.h>
 
+
+#ifdef _WIN32
+	#include <windows.h>
+#else
+	#include <unistd.h>
+#endif
+
 #define MAX_NAME_LENGTH 30
 #define MAX_PERSONS 100
 #define FILE_NAME "data.txt"
@@ -17,7 +24,7 @@ typedef struct{
     int followers; // in millions
 }Person;
 
-bool foo_mode = false ; //only for demonstration
+bool demonstration = false ; //only for demonstration
 
 
 //Function Prototypes
@@ -31,6 +38,7 @@ void replaceSpaceToUnderscore(char *);
 void replaceUnderscoreToSpace(char *);
 void printAscii(int);
 int updateHighscore(int);
+void clear();
 
 
 /**
@@ -48,7 +56,7 @@ int main() {
         printAscii(0);
         printf("\n\nEnter:\n1 to play\n2 to add a question\n3 to view all questions\n4 to exit\n--> ");
         scanf("%d", &mode);
-        system("clear"); // Clear console screen (for Windows, use "cls")
+        clear(); // Clear console screen (for Windows, use "cls")
 
         switch (mode) {
             case 1:
@@ -75,7 +83,7 @@ int main() {
  * woks by counting no of new line "/n" in the file
  * @returns no_of_questions 
 */
-int countQuestions(){
+int countQuestions() {
     FILE *fp;
     char c;
     int count = 0;
@@ -148,7 +156,7 @@ void showQuestions(int num_ques, Person* s) {
  * @param num_ques. refrence to no of question 
  * @param s. reference to structure
 */
-void addQuestions(int *num_ques, Person* s){
+void addQuestions(int *num_ques, Person* s) {
     int num;
     printf("Enter the number of questions you want to add: ");
     scanf("%d", &num);
@@ -241,7 +249,7 @@ void playGame(int no_of_ques, Person* s) {
         printf("\n\nWho has more followers?\n");
         replaceUnderscoreToSpace(s[index1].name);
         replaceUnderscoreToSpace(s[index2].name);
-        if (foo_mode){
+        if (demonstration){
             printf("\n1. %s (Followers: %d M)\n", s[index1].name, s[index1].followers);
             printf("2. %s (Followers: %d M)\n", s[index2].name, s[index2].followers);
         }
@@ -264,7 +272,7 @@ void playGame(int no_of_ques, Person* s) {
             if (user_choice != 1 && user_choice != 2) 
                 printf("Invalid input. Please enter 1 or 2.\n");
             else {
-                system("clear");
+                clear();
                 //let user see the auctual no of followers
                 printf("\nyou chose : %s \n",s[winner_index].name);
                 printf("\n1. %s (Followers: %d M)\n", s[index1].name, s[index1].followers);
@@ -349,3 +357,14 @@ int updateHighscore(int current_score){
     return high_score;
 }
 
+/**
+ * clears the terminal screeen
+ * works on both linux and windows
+*/
+void clear() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
